@@ -1,0 +1,13 @@
+/.cursor
+node_modules/
+target/
+venv/
+.venv/
+.env
+.env.*
+*.pyc
+__pycache__/
+.pkl
+*.log
+dist/
+.angular/

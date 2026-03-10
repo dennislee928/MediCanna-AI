@@ -1,0 +1,5 @@
+# MediCanna AI - 微服務編排 (日後部署用)
+# services: frontend, gateway, ml-engine
+
+version: "3.8"
+services: {}
