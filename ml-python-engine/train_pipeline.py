@@ -107,12 +107,13 @@ def main():
         keywords = [feature_names[i] for i in top_idx if i < len(feature_names)]
         print(f"  Cluster {c}: {keywords}")
 
-    # 儲存模型與向量器
+    # 儲存模型與向量器（API 推論時需用 type_encoder 組出完整特徵）
     models_dir = os.path.join(base_dir, "models")
     os.makedirs(models_dir, exist_ok=True)
     joblib.dump(kmeans, os.path.join(models_dir, "kmeans_model.pkl"))
     joblib.dump(tfidf, os.path.join(models_dir, "tfidf_vectorizer.pkl"))
-    print(f"\n已儲存: {models_dir}/kmeans_model.pkl, tfidf_vectorizer.pkl")
+    joblib.dump(type_encoder, os.path.join(models_dir, "type_encoder.pkl"))
+    print(f"\n已儲存: {models_dir}/kmeans_model.pkl, tfidf_vectorizer.pkl, type_encoder.pkl")
 
     # 匯出帶 cluster 的資料集
     out_path = os.path.join(base_dir, "data", "clustered_strains.csv")
