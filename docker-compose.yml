@@ -1,5 +1,39 @@
-# MediCanna AI - 微服務編排 (日後部署用)
-# services: frontend, gateway, ml-engine
+# MediCanna AI - 微服務編排
+# 啟動：docker-compose up --build
+# 前端(80) -> Gateway(8080) -> ML Engine(8000)
 
 version: "3.8"
-services: {}
+services:
+  ml-engine:
+    build: ./ml-python-engine
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-python-engine/data:/app/data
+      - ./ml-python-engine/models:/app/models
+    networks:
+      - medicanna
+
+  gateway:
+    build: ./backend-rust-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      ML_PREDICT_URL: "http://ml-engine:8000/api/predict"
+    depends_on:
+      - ml-engine
+    networks:
+      - medicanna
+
+  frontend:
+    build: ./frontend-angular
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
+    networks:
+      - medicanna
+
+networks:
+  medicanna:
+    driver: bridge
