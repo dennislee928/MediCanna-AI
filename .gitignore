@@ -7,7 +7,9 @@ venv/
 .env.*
 *.pyc
 __pycache__/
-.pkl
+.pytest_cache/
+*.pkl
+ml-python-engine/data/clustered_strains.csv
 *.log
 dist/
 .angular/

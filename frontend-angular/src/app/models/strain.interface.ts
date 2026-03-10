@@ -7,6 +7,21 @@ export interface StrainItem {
   flavor: string;
 }
 
+export interface ResponseMeta {
+  request_id: string;
+  model_version: string;
+  warnings: string[];
+}
+
 export interface RecommendationResponse {
   recommendations: StrainItem[];
+  meta: ResponseMeta;
+}
+
+export interface ErrorEnvelope {
+  error: {
+    code: string;
+    message: string;
+    request_id: string;
+  };
 }

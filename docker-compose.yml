@@ -2,15 +2,24 @@
 # 啟動：docker-compose up --build
 # 前端(80) -> Gateway(8080) -> ML Engine(8000)
 
-version: "3.8"
 services:
   ml-engine:
     build: ./ml-python-engine
     ports:
       - "8000:8000"
+    environment:
+      PORT: "8000"
+      MODEL_VERSION: "kmeans-v1"
+      ML_FAIL_FAST: "true"
     volumes:
       - ./ml-python-engine/data:/app/data
       - ./ml-python-engine/models:/app/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=3)"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     networks:
       - medicanna
 
@@ -20,8 +29,18 @@ services:
       - "8080:8080"
     environment:
       ML_PREDICT_URL: "http://ml-engine:8000/api/predict"
+      ML_HEALTH_URL: "http://ml-engine:8000/readyz"
+      ALLOWED_ORIGINS: "http://localhost,http://localhost:4200"
+      PORT: "8080"
     depends_on:
-      - ml-engine
+      ml-engine:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - medicanna
 
@@ -29,8 +48,17 @@ services:
     build: ./frontend-angular
     ports:
       - "80:80"
+    environment:
+      GATEWAY_URL: "http://localhost:8080/api/v1/recommend"
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - medicanna
 

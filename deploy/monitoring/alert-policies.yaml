@@ -1,0 +1,18 @@
+displayName: "MediCanna - Cloud Run 5xx Rate High"
+combiner: OR
+conditions:
+  - displayName: "Cloud Run 5xx ratio > 5%"
+    conditionThreshold:
+      filter: metric.type="run.googleapis.com/request_count" resource.type="cloud_run_revision"
+      comparison: COMPARISON_GT
+      thresholdValue: 0.05
+      duration: 300s
+      trigger:
+        count: 1
+      aggregations:
+        - alignmentPeriod: 60s
+          perSeriesAligner: ALIGN_RATE
+notificationChannels: []
+documentation:
+  content: "Investigate gateway and ml service logs using request_id correlation."
+  mimeType: "text/markdown"

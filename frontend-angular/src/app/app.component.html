@@ -5,6 +5,26 @@
   </header>
   <main>
     <app-symptom-form (recommendationsReady)="onRecommendationsReady($event)" />
+    @if (warnings.length > 0) {
+      <section class="warnings">
+        <h3>提醒</h3>
+        <ul>
+          @for (warning of warnings; track warning) {
+            <li>{{ warning }}</li>
+          }
+        </ul>
+      </section>
+    }
+    @if (requestId || modelVersion) {
+      <section class="meta">
+        @if (requestId) {
+          <p>Request ID: {{ requestId }}</p>
+        }
+        @if (modelVersion) {
+          <p>Model Version: {{ modelVersion }}</p>
+        }
+      </section>
+    }
     <app-recommendation-list [strains]="recommendations" />
   </main>
 </div>

@@ -2,16 +2,16 @@
 
 ## 🚀 快速開始 (Quick Start)
 
-1. **訓練 ML 模型**（僅需執行一次，產生 `models/*.pkl` 與 `data/clustered_strains.csv`）  
-   `cd ml-python-engine && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python -m spacy download en_core_web_sm && python train_pipeline.py`
+1. **Bootstrap ML artifacts**（若缺少模型檔自動訓練並驗證）  
+   `cd ml-python-engine && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python bootstrap_models.py`
 
-2. **本地開發**  
-   - ML API: `cd ml-python-engine && uvicorn main:app --reload --port 8000`  
-   - Gateway: `cd backend-rust-gateway && cargo run`（Port 8080）  
+2. **本地開發（環境化設定）**  
+   - ML API: `cd ml-python-engine && ML_FAIL_FAST=true uvicorn main:app --reload --port 8000`  
+   - Gateway: `cd backend-rust-gateway && ML_PREDICT_URL=http://localhost:8000/api/predict ALLOWED_ORIGINS=http://localhost:4200 cargo run`（Port 8080）  
    - 前端: `cd frontend-angular && npm start`（Port 4200）  
    - 瀏覽 http://localhost:4200 輸入症狀取得推薦。
 
-3. **Docker 一鍵啟動**  
+3. **Docker 一鍵啟動（含 healthcheck + readiness）**  
    `docker-compose up --build`  
    - 前端: http://localhost:80  
    - Gateway: http://localhost:8080  
@@ -19,6 +19,33 @@
 
 4. **驗證 API**  
    `bash scripts/verify-api.sh`（需先啟動服務）
+
+5. **測試與 Contract Check**  
+   - Rust: `cd backend-rust-gateway && cargo test`  
+   - ML: `cd ml-python-engine && pytest -q`  
+   - Frontend: `cd frontend-angular && npm test -- --watch=false --browsers=ChromeHeadless`  
+   - Contract: `bash scripts/contract-test.sh`
+
+## 🔌 API 與健康檢查
+
+- `POST /api/v1/recommend`  
+  成功回傳 `recommendations` + `meta`（`request_id`, `model_version`, `warnings`）
+- 錯誤回傳統一格式：`{"error":{"code":"...","message":"...","request_id":"..."}}`
+- Gateway:
+  - `GET /healthz`
+  - `GET /readyz`
+- ML:
+  - `GET /health`（相容）
+  - `GET /healthz`
+  - `GET /readyz`
+
+## ☁️ Cloud Run 部署
+
+- CI: `.github/workflows/ci.yml`
+- Release pipeline: `.github/workflows/release-cloudrun.yml`
+- 一鍵部署腳本: `deploy/cloudrun/deploy.sh`
+- 監控與警報設定: `deploy/monitoring/`
+- 發版與回滾手冊: `docs/release-playbook.md`
 
 ## 📂 Repository Structure (系統資料夾結構)
 \`\`\`text

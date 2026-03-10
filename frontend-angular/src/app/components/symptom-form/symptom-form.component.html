@@ -21,4 +21,8 @@
       取得推薦
     }
   </button>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
 </form>

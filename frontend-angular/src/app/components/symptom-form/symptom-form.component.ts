@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ApiService } from '../../services/api.service';
-import { StrainItem } from '../../models/strain.interface';
+import { RecommendationResponse } from '../../models/strain.interface';
 
 const AVOID_EFFECTS_OPTIONS = [
   'Dry Mouth',
@@ -32,8 +32,9 @@ const AVOID_EFFECTS_OPTIONS = [
   styleUrl: './symptom-form.component.scss',
 })
 export class SymptomFormComponent {
-  readonly recommendationsReady = output<StrainItem[]>();
+  readonly recommendationsReady = output<RecommendationResponse>();
   loading = false;
+  errorMessage = '';
   form: FormGroup;
 
   constructor(
@@ -58,18 +59,22 @@ export class SymptomFormComponent {
   onSubmit(): void {
     if (this.loading) return;
     const symptoms = (this.form.get('symptoms')?.value ?? '').trim();
-    if (!symptoms) return;
+    if (!symptoms) {
+      this.errorMessage = '請輸入症狀描述。';
+      return;
+    }
 
     const avoid_effects = this.avoidOptions.filter((_, i) => this.avoidEffects.at(i).value);
     this.loading = true;
+    this.errorMessage = '';
     this.api.getRecommendations({ symptoms, avoid_effects }).subscribe({
       next: (res) => {
         this.loading = false;
-        this.recommendationsReady.emit(res.recommendations ?? []);
+        this.recommendationsReady.emit(res);
       },
-      error: () => {
+      error: (error) => {
         this.loading = false;
-        this.recommendationsReady.emit([]);
+        this.errorMessage = error?.error?.error?.message ?? '查詢失敗，請稍後再試。';
       },
     });
   }
