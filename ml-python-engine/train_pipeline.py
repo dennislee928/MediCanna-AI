@@ -1,9 +1,18 @@
 """
-MediCanna AI - 數據預處理與特徵工程
+MediCanna AI - 數據預處理、特徵工程與 K-Means 分群
 Phase 2: 讀取 CSV、缺失值填補、文本合併、SpaCy NLP 清洗
+Phase 3: TF-IDF、One-Hot Type、KMeans 訓練、模型儲存、clustered_strains 匯出
 """
 import os
+import sys
+import subprocess
 import pandas as pd
+import numpy as np
+import joblib
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.cluster import KMeans
+from scipy.sparse import hstack
 
 
 def load_dataset(data_path: str) -> pd.DataFrame:
@@ -71,8 +80,45 @@ def main():
     print("NLP 清洗 combined_text...")
     df["combined_text_cleaned"] = df["combined_text"].apply(lambda x: clean_text_with_spacy(x, nlp))
 
-    print("預處理完成，前 3 筆 combined_text_cleaned:")
-    print(df[["Name", "Type", "Rating", "combined_text_cleaned"]].head(3).to_string())
+    # --- Phase 3: TF-IDF、One-Hot、KMeans ---
+    print("TF-IDF 轉換...")
+    tfidf = TfidfVectorizer(max_features=500, min_df=1, stop_words="english")
+    X_tfidf = tfidf.fit_transform(df["combined_text_cleaned"].fillna(""))
+
+    print("Type 欄位 One-Hot Encoding...")
+    type_encoder = OneHotEncoder(sparse_output=True, handle_unknown="ignore")
+    type_col = df["Type"].fillna("Hybrid").values.reshape(-1, 1)
+    X_type = type_encoder.fit_transform(type_col)
+
+    print("合併特徵矩陣...")
+    X = hstack([X_tfidf, X_type]).toarray()
+
+    print("KMeans 分群 (n_clusters=5)...")
+    n_clusters = 5
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+    df["cluster"] = kmeans.fit_predict(X)
+
+    # 評估：各群集最常出現的關鍵字
+    feature_names = list(tfidf.get_feature_names_out())
+    print("\n各群集代表性關鍵字 (療效/風味):")
+    for c in range(n_clusters):
+        center = kmeans.cluster_centers_[c][: len(feature_names)]
+        top_idx = np.argsort(center)[-5:][::-1]
+        keywords = [feature_names[i] for i in top_idx if i < len(feature_names)]
+        print(f"  Cluster {c}: {keywords}")
+
+    # 儲存模型與向量器
+    models_dir = os.path.join(base_dir, "models")
+    os.makedirs(models_dir, exist_ok=True)
+    joblib.dump(kmeans, os.path.join(models_dir, "kmeans_model.pkl"))
+    joblib.dump(tfidf, os.path.join(models_dir, "tfidf_vectorizer.pkl"))
+    print(f"\n已儲存: {models_dir}/kmeans_model.pkl, tfidf_vectorizer.pkl")
+
+    # 匯出帶 cluster 的資料集
+    out_path = os.path.join(base_dir, "data", "clustered_strains.csv")
+    df.to_csv(out_path, index=False)
+    print(f"已匯出: {out_path}")
+
     return df
 
 
