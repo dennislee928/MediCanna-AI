@@ -1,0 +1,11 @@
+<div class="app">
+  <header>
+    <h1>{{ title }}</h1>
+    <p>依症狀與偏好取得品種推薦</p>
+  </header>
+  <main>
+    <app-symptom-form (recommendationsReady)="onRecommendationsReady($event)" />
+    <app-recommendation-list [strains]="recommendations" />
+  </main>
+</div>
+<router-outlet />

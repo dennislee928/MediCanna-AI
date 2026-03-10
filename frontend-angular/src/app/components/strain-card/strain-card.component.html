@@ -1,0 +1,13 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ strain().name }}</mat-card-title>
+    <mat-card-subtitle>評分 {{ strain().rating | number : '1.1-1' }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-chip-set>
+      <mat-chip-row>{{ strain().type }}</mat-chip-row>
+    </mat-chip-set>
+    <p class="effects"><strong>療效：</strong>{{ strain().effects }}</p>
+    <p class="flavor"><strong>風味：</strong>{{ strain().flavor }}</p>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,24 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="symptom-form">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>所需療效 / 症狀描述</mat-label>
+    <textarea matInput formControlName="symptoms" rows="3" placeholder="例如：pain relief, relaxed, sleepy"></textarea>
+  </mat-form-field>
+
+  <div class="avoid-section">
+    <span class="label">希望避免的副作用（可多選）</span>
+    <div class="checkboxes" formArrayName="avoidEffects">
+      @for (opt of avoidOptions; track opt; let i = $index) {
+        <mat-checkbox [formControlName]="i">{{ opt }}</mat-checkbox>
+      }
+    </div>
+  </div>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+    @if (loading) {
+      <mat-spinner diameter="24"></mat-spinner>
+      <span class="btn-text">查詢中...</span>
+    } @else {
+      取得推薦
+    }
+  </button>
+</form>

@@ -1,0 +1,12 @@
+<div class="recommendation-list">
+  @if (strains().length === 0) {
+    <p class="empty">尚無推薦結果，請在上方輸入症狀並取得推薦。</p>
+  } @else {
+    <h3>推薦品種 (Top {{ strains().length }})</h3>
+    <div class="cards">
+      @for (strain of strains(); track strain.name) {
+        <app-strain-card [strain]="strain" />
+      }
+    </div>
+  }
+</div>
