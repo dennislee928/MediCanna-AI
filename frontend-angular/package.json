@@ -68,6 +68,7 @@
     "flatted": "^3.4.2",
     "pacote": "^21.5.1",
     "path-to-regexp": "^0.1.13",
-    "rollup": "^4.59.0"
+    "rollup": "^4.59.0",
+    "sigstore": "^4.1.1"
   }
 }
