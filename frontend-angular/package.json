@@ -50,6 +50,7 @@
     "node-forge": "^1.4.0",
     "js-yaml": "^4.3.2",
     "launch-editor": "^2.14.2",
-    "postcss": "^8.5.23"
+    "postcss": "^8.5.23",
+    "engine.io": "^6.6.10"
   }
 }
