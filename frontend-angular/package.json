@@ -66,6 +66,7 @@
     "@babel/plugin-transform-modules-systemjs": "^7.29.4",
     "compression": "^1.8.2",
     "flatted": "^3.4.2",
-    "pacote": "^21.5.1"
+    "pacote": "^21.5.1",
+    "path-to-regexp": "^0.1.13"
   }
 }
