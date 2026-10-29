@@ -63,6 +63,7 @@
     "socket.io-parser": "^4.2.7",
     "tmp": "^0.2.6",
     "ws": "^8.21.0",
-    "@babel/plugin-transform-modules-systemjs": "^7.29.4"
+    "@babel/plugin-transform-modules-systemjs": "^7.29.4",
+    "compression": "^1.8.2"
   }
 }
