@@ -67,6 +67,7 @@
     "compression": "^1.8.2",
     "flatted": "^3.4.2",
     "pacote": "^21.5.1",
-    "path-to-regexp": "^0.1.13"
+    "path-to-regexp": "^0.1.13",
+    "rollup": "^4.59.0"
   }
 }
