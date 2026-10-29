@@ -75,6 +75,7 @@
     "qs": "^6.16.1",
     "webpack-dev-server": "^5.2.6",
     "postcss-selector-parser": "^7.1.6",
-    "@sigstore/core": "^3.2.1"
+    "@sigstore/core": "^3.2.1",
+    "ajv": "^8.18.0"
   }
 }
