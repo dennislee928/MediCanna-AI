@@ -43,6 +43,7 @@
     "shell-quote": "^1.9.0",
     "websocket-driver": "^0.7.5",
     "proxy-addr": "^2.0.8",
-    "fast-uri": "^3.1.9"
+    "fast-uri": "^3.1.9",
+    "vite": "^6.4.4"
   }
 }
