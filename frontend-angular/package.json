@@ -72,6 +72,7 @@
     "sigstore": "^4.1.1",
     "source-map-js": "^1.2.2",
     "webpack-dev-middleware": "^7.4.6",
-    "qs": "^6.16.1"
+    "qs": "^6.16.1",
+    "webpack-dev-server": "^5.2.6"
   }
 }
